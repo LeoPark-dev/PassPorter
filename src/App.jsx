@@ -20,6 +20,13 @@ import EnglishPractice from './components/EnglishPractice'
 import AIPractice from './components/AIPractice'
 import CEFRTest from './components/CEFRTest'
 import { CardDemo } from './components/ui/CardDemo'
+import { Avatar, AvatarFallback } from './components/ui/avatar'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from './components/ui/dropdown-menu'
 import { IconX } from '@tabler/icons-react'
 import './App.css'
 import './components/DocumentPractice.css'
@@ -1019,34 +1026,74 @@ ${filledFields.map(f => `- ${f.fieldLabel} (fieldId: ${f.fieldId}): ${f.userInpu
             <div className="get-started-button-wrapper">
               {user ? (
                 <>
-                  <span style={{ 
-                    fontSize: '0.875rem', 
-                    color: '#333',
-                    marginRight: '0.5rem',
-                    fontWeight: 500
-                  }}>
-                    {user.name || user.email}
-                  </span>
-                  <button
-                    onClick={handleLogout}
-                    className="get-started-button"
-                  >
-                    Logout
-                  </button>
-                </>
-              ) : (
-                <>
-                  <button
-                    onClick={() => setShowAuthCard(true)}
-                    className="get-started-button"
-                  >
-                    Get Started
-                  </button>
                   <button
                     onClick={() => setShowLevelTest(true)}
                     className="level-test-button"
                   >
                     Level Test
+                  </button>
+                  <div 
+                    style={{
+                      width: '1px',
+                      height: '0.875rem',
+                      backgroundColor: '#000000',
+                      margin: '0 0.375rem'
+                    }}
+                  />
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <button
+                        style={{
+                          background: 'none',
+                          border: 'none',
+                          cursor: 'pointer',
+                          padding: 0,
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center'
+                        }}
+                      >
+                        <Avatar style={{ width: '24px', height: '24px' }}>
+                          <AvatarFallback style={{ 
+                            fontSize: '0.75rem',
+                            backgroundColor: '#000000',
+                            color: '#ffffff',
+                            width: '24px',
+                            height: '24px'
+                          }}>
+                            {(user.name || user.email || 'U').charAt(0).toUpperCase()}
+                          </AvatarFallback>
+                        </Avatar>
+                      </button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end" style={{ marginTop: '0.5rem' }}>
+                      <DropdownMenuItem onClick={handleLogout}>
+                        Log out
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </>
+              ) : (
+                <>
+                  <button
+                    onClick={() => setShowLevelTest(true)}
+                    className="level-test-button"
+                  >
+                    Level Test
+                  </button>
+                  <div 
+                    style={{
+                      width: '1px',
+                      height: '0.875rem',
+                      backgroundColor: '#000000',
+                      margin: '0 0.375rem'
+                    }}
+                  />
+                  <button
+                    onClick={() => setShowAuthCard(true)}
+                    className="get-started-button"
+                  >
+                    Start
                   </button>
                 </>
               )}
