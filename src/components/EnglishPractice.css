@@ -1,0 +1,127 @@
+.english-practice-content {
+  padding: 1.5rem 2rem;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.english-practice-section {
+  margin-bottom: 2.5rem;
+}
+
+.english-practice-subsection {
+  margin-bottom: 1.75rem;
+  padding: 1.5rem;
+  background: rgba(249, 250, 251, 0.6);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-radius: 0.75rem;
+  border-left: 4px solid rgb(25, 118, 210);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.english-practice-subsection:last-child {
+  margin-bottom: 0;
+}
+
+.english-practice-subsection-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #1f2937;
+  margin-bottom: 1rem;
+}
+
+.english-practice-phrase-item {
+  padding: 1.25rem 0;
+  padding-left: 1.5rem;
+  position: relative;
+  line-height: 1.6;
+  color: #374151;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.english-practice-phrase-item .flex {
+  align-items: flex-start;
+}
+
+.english-practice-phrase-item:last-child {
+  border-bottom: none;
+}
+
+.english-practice-phrase-item::before {
+  content: '✓';
+  position: absolute;
+  left: 0;
+  color: rgb(25, 118, 210);
+  font-weight: bold;
+}
+
+.english-practice-phrase-en {
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: #1f2937;
+  margin-bottom: 0.5rem;
+  line-height: 1.5;
+}
+
+.english-practice-phrase-ko {
+  font-size: 0.9rem;
+  color: #6b7280;
+  margin-bottom: 0.5rem;
+  line-height: 1.5;
+}
+
+.english-practice-phrase-vocab {
+  font-size: 0.85rem;
+  color: #9ca3af;
+  margin-top: 0.5rem;
+  padding-top: 0.5rem;
+  border-top: 1px solid #f3f4f6;
+}
+
+.english-practice-info-box {
+  background: linear-gradient(135deg, rgba(25, 118, 210, 0.15) 0%, rgba(25, 118, 210, 0.08) 100%);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  padding: 1.5rem;
+  border-radius: 0.75rem;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  margin-bottom: 2rem;
+  box-shadow: 0 4px 16px rgba(25, 118, 210, 0.1);
+}
+
+.english-practice-info-text {
+  line-height: 1.7;
+  color: #374151;
+}
+
+.english-practice-section-title {
+  font-size: 1.375rem;
+  font-weight: 700;
+  color: #1f2937;
+  margin-bottom: 1.5rem;
+  margin-top: 0.5rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 2px solid #e5e7eb;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.english-practice-modal-scroll {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
+}
+
+.english-practice-modal-scroll::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Opera */
+  width: 0;
+  height: 0;
+}
+
+@media (max-width: 768px) {
+  .english-practice-content {
+    padding: 1.5rem;
+  }
+}
+
