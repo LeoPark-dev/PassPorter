@@ -264,6 +264,7 @@ function App() {
         setShowDocumentPractice(false)
         setShowEnglishPractice(false)
         setShowAIPractice(false)
+        setShowLevelTest(false)
         setSelectedCountry(null)
         setIsExpanded(true)
       },
