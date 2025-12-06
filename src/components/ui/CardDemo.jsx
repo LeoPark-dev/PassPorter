@@ -2,7 +2,7 @@ import { useState } from "react"
 import { Label } from "@/components/ui/label"
 import "./CardDemo.css"
 
-export function CardDemo() {
+export function CardDemo({ onSuccess, onClose }) {
   const [isLogin, setIsLogin] = useState(true)
   const [formData, setFormData] = useState({
     email: '',
@@ -10,19 +10,95 @@ export function CardDemo() {
     confirmPassword: '',
     name: ''
   })
+  const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState('')
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
-    if (isLogin) {
-      console.log('로그인:', { email: formData.email, password: formData.password })
-      // 로그인 로직 구현
-    } else {
-      if (formData.password !== formData.confirmPassword) {
-        alert('비밀번호가 일치하지 않습니다.')
-        return
+    setError('')
+    setIsLoading(true)
+
+    try {
+      if (isLogin) {
+        // 로그인
+        const response = await fetch('/api/auth/login', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            email: formData.email,
+            password: formData.password,
+          }),
+        })
+
+        const data = await response.json()
+
+        if (!response.ok) {
+          throw new Error(data.error || '로그인에 실패했습니다.')
+        }
+
+        // 토큰을 localStorage에 저장
+        if (data.session?.access_token) {
+          localStorage.setItem('access_token', data.session.access_token)
+          localStorage.setItem('refresh_token', data.session.refresh_token)
+        }
+
+        // 사용자 정보 저장
+        if (data.user) {
+          localStorage.setItem('user', JSON.stringify(data.user))
+        }
+
+        // 성공 콜백 호출
+        if (onSuccess) {
+          onSuccess(data.user)
+        }
+
+        // 모달 닫기
+        if (onClose) {
+          onClose()
+        }
+      } else {
+        // 회원가입
+        if (formData.password !== formData.confirmPassword) {
+          setError('비밀번호가 일치하지 않습니다.')
+          setIsLoading(false)
+          return
+        }
+
+        const response = await fetch('/api/auth/signup', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            email: formData.email,
+            password: formData.password,
+            name: formData.name,
+          }),
+        })
+
+        const data = await response.json()
+
+        if (!response.ok) {
+          throw new Error(data.error || '회원가입에 실패했습니다.')
+        }
+
+        alert('회원가입이 완료되었습니다! 로그인해주세요.')
+        
+        // 로그인 모드로 전환
+        setIsLogin(true)
+        setFormData({
+          email: formData.email, // 이메일은 유지
+          password: '',
+          confirmPassword: '',
+          name: ''
+        })
       }
-      console.log('회원가입:', formData)
-      // 회원가입 로직 구현
+    } catch (err) {
+      setError(err.message || '오류가 발생했습니다.')
+    } finally {
+      setIsLoading(false)
     }
   }
 
@@ -121,14 +197,25 @@ export function CardDemo() {
             </div>
           )}
         </form>
+        {error && (
+          <div style={{ 
+            color: '#ef4444', 
+            fontSize: '0.875rem', 
+            marginTop: '1rem',
+            textAlign: 'center'
+          }}>
+            {error}
+          </div>
+        )}
       </div>
       <div className="card-demo-footer">
         <button
           type="submit"
           className="card-demo-button-primary"
           onClick={handleSubmit}
+          disabled={isLoading}
         >
-          {isLogin ? 'Login' : 'Sign Up'}
+          {isLoading ? (isLogin ? '로그인 중...' : '가입 중...') : (isLogin ? 'Login' : 'Sign Up')}
         </button>
         <button
           type="button"

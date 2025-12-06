@@ -46,6 +46,8 @@ function App() {
   const [draggedArticle, setDraggedArticle] = useState(null)
   const [articleAnalysis, setArticleAnalysis] = useState(null)
   const [isAnalyzingArticle, setIsAnalyzingArticle] = useState(false)
+  const [user, setUser] = useState(null)
+  const [isLoadingUser, setIsLoadingUser] = useState(true)
   
   // 서류작성 연습 관련 상태
   const FORM_FIELDS = [
@@ -231,6 +233,71 @@ function App() {
     } catch (error) {
       console.error('뉴스 가져오기 오류:', error)
       return []
+    }
+  }
+
+  // 초기 사용자 인증 상태 확인
+  useEffect(() => {
+    const checkUser = async () => {
+      try {
+        const token = localStorage.getItem('access_token')
+        const storedUser = localStorage.getItem('user')
+        
+        if (token && storedUser) {
+          // 토큰 유효성 확인
+          const response = await fetch('/api/auth/user', {
+            headers: {
+              'Authorization': `Bearer ${token}`,
+            },
+          })
+
+          if (response.ok) {
+            const data = await response.json()
+            setUser(data.user)
+          } else {
+            // 토큰이 유효하지 않으면 로컬 스토리지 정리
+            localStorage.removeItem('access_token')
+            localStorage.removeItem('refresh_token')
+            localStorage.removeItem('user')
+            setUser(null)
+          }
+        }
+      } catch (error) {
+        console.error('사용자 확인 오류:', error)
+        setUser(null)
+      } finally {
+        setIsLoadingUser(false)
+      }
+    }
+
+    checkUser()
+  }, [])
+
+  // 로그인 성공 핸들러
+  const handleLoginSuccess = (userData) => {
+    setUser(userData)
+    setShowAuthCard(false)
+  }
+
+  // 로그아웃 핸들러
+  const handleLogout = async () => {
+    try {
+      const token = localStorage.getItem('access_token')
+      if (token) {
+        await fetch('/api/auth/logout', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+          },
+        })
+      }
+    } catch (error) {
+      console.error('로그아웃 오류:', error)
+    } finally {
+      localStorage.removeItem('access_token')
+      localStorage.removeItem('refresh_token')
+      localStorage.removeItem('user')
+      setUser(null)
     }
   }
 
@@ -950,18 +1017,40 @@ ${filledFields.map(f => `- ${f.fieldLabel} (fieldId: ${f.fieldId}): ${f.userInpu
               <Globe className="globe-component relative" />
             </div>
             <div className="get-started-button-wrapper">
-              <button
-                onClick={() => setShowAuthCard(true)}
-                className="get-started-button"
-              >
-                Get Started
-              </button>
-              <button
-                onClick={() => setShowLevelTest(true)}
-                className="level-test-button"
-              >
-                Level Test
-              </button>
+              {user ? (
+                <>
+                  <span style={{ 
+                    fontSize: '0.875rem', 
+                    color: '#333',
+                    marginRight: '0.5rem',
+                    fontWeight: 500
+                  }}>
+                    {user.name || user.email}
+                  </span>
+                  <button
+                    onClick={handleLogout}
+                    className="get-started-button"
+                    style={{ background: 'linear-gradient(135deg, #ef4444 0%, rgba(239, 68, 68, 0.9) 100%)' }}
+                  >
+                    Logout
+                  </button>
+                </>
+              ) : (
+                <>
+                  <button
+                    onClick={() => setShowAuthCard(true)}
+                    className="get-started-button"
+                  >
+                    Get Started
+                  </button>
+                  <button
+                    onClick={() => setShowLevelTest(true)}
+                    className="level-test-button"
+                  >
+                    Level Test
+                  </button>
+                </>
+              )}
             </div>
             
             {/* 드롭된 기사 분석 결과 */}
@@ -1197,7 +1286,7 @@ ${filledFields.map(f => `- ${f.fieldLabel} (fieldId: ${f.fieldId}): ${f.userInpu
               className="auth-card-container"
               onClick={(e) => e.stopPropagation()}
             >
-              <CardDemo />
+              <CardDemo onSuccess={handleLoginSuccess} onClose={() => setShowAuthCard(false)} />
             </motion.div>
           </motion.div>
         )}
