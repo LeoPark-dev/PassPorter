@@ -27,6 +27,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from './components/ui/dropdown-menu'
+import { Badge } from './components/ui/badge'
 import { IconX } from '@tabler/icons-react'
 import './App.css'
 import './components/DocumentPractice.css'
@@ -1067,8 +1068,21 @@ ${filledFields.map(f => `- ${f.fieldLabel} (fieldId: ${f.fieldId}): ${f.userInpu
                       </button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end" style={{ marginTop: '0.5rem' }}>
-                      <DropdownMenuItem onClick={handleLogout}>
-                        Log out
+                      <DropdownMenuItem onClick={handleLogout} style={{ padding: 0 }}>
+                        <Badge 
+                          variant="outline" 
+                          style={{ 
+                            cursor: 'pointer',
+                            width: '100%',
+                            justifyContent: 'center',
+                            padding: '0.5rem 1rem',
+                            border: '1px solid #000',
+                            backgroundColor: 'transparent',
+                            color: '#000'
+                          }}
+                        >
+                          Log out
+                        </Badge>
                       </DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>
