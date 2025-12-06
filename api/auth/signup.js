@@ -59,6 +59,7 @@ export default async function handler(req, res) {
         data: {
           name: name,
         },
+        emailRedirectTo: undefined, // 이메일 확인 후 리다이렉트 URL (선택사항)
       },
     })
 
@@ -68,17 +69,36 @@ export default async function handler(req, res) {
         res.status(400).json({ error: '이미 등록된 이메일입니다.' })
         return
       }
-      res.status(400).json({ error: error.message })
+      console.error('Signup error details:', error)
+      res.status(400).json({ error: error.message || '회원가입에 실패했습니다.' })
       return
     }
 
-    // 성공 응답
+    // 이메일 확인이 필요한 경우
+    if (!data.session) {
+      res.status(201).json({
+        message: '회원가입이 완료되었습니다. 이메일을 확인하여 계정을 활성화해주세요.',
+        user: {
+          id: data.user?.id,
+          email: data.user?.email,
+          name: data.user?.user_metadata?.name,
+        },
+        requiresEmailConfirmation: true,
+      })
+      return
+    }
+
+    // 세션이 있는 경우 (이메일 확인 불필요)
     res.status(201).json({
       message: '회원가입이 완료되었습니다.',
       user: {
         id: data.user?.id,
         email: data.user?.email,
         name: data.user?.user_metadata?.name,
+      },
+      session: {
+        access_token: data.session?.access_token,
+        refresh_token: data.session?.refresh_token,
       },
     })
   } catch (error) {

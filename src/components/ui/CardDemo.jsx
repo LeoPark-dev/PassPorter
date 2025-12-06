@@ -35,6 +35,10 @@ export function CardDemo({ onSuccess, onClose }) {
         const data = await response.json()
 
         if (!response.ok) {
+          // 이메일 확인이 필요한 경우 특별 처리
+          if (data.requiresEmailConfirmation) {
+            throw new Error(data.error || '이메일 인증이 필요합니다.')
+          }
           throw new Error(data.error || '로그인에 실패했습니다.')
         }
 
@@ -84,7 +88,26 @@ export function CardDemo({ onSuccess, onClose }) {
           throw new Error(data.error || '회원가입에 실패했습니다.')
         }
 
-        alert('회원가입이 완료되었습니다! 로그인해주세요.')
+        // 이메일 확인이 필요한 경우
+        if (data.requiresEmailConfirmation) {
+          alert('회원가입이 완료되었습니다!\n\n이메일을 확인하여 계정을 활성화한 후 로그인해주세요.')
+        } else {
+          // 세션이 있는 경우 자동 로그인
+          if (data.session?.access_token) {
+            localStorage.setItem('access_token', data.session.access_token)
+            localStorage.setItem('refresh_token', data.session.refresh_token)
+          }
+          if (data.user) {
+            localStorage.setItem('user', JSON.stringify(data.user))
+          }
+          if (onSuccess) {
+            onSuccess(data.user)
+          }
+          if (onClose) {
+            onClose()
+          }
+          return
+        }
         
         // 로그인 모드로 전환
         setIsLogin(true)

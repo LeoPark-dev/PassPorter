@@ -1030,7 +1030,6 @@ ${filledFields.map(f => `- ${f.fieldLabel} (fieldId: ${f.fieldId}): ${f.userInpu
                   <button
                     onClick={handleLogout}
                     className="get-started-button"
-                    style={{ background: 'linear-gradient(135deg, #ef4444 0%, rgba(239, 68, 68, 0.9) 100%)' }}
                   >
                     Logout
                   </button>

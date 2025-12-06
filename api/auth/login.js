@@ -45,12 +45,30 @@ export default async function handler(req, res) {
     })
 
     if (error) {
-      // 인증 실패
-      if (error.message.includes('Invalid login credentials') || error.message.includes('Email not confirmed')) {
+      // 인증 실패 - 더 자세한 에러 메시지
+      if (error.message.includes('Email not confirmed') || error.message.includes('email_not_confirmed')) {
+        res.status(401).json({ 
+          error: '이메일 인증이 필요합니다. 회원가입 시 받은 이메일을 확인해주세요.',
+          requiresEmailConfirmation: true
+        })
+        return
+      }
+      if (error.message.includes('Invalid login credentials') || error.message.includes('invalid_credentials')) {
         res.status(401).json({ error: '이메일 또는 비밀번호가 올바르지 않습니다.' })
         return
       }
-      res.status(400).json({ error: error.message })
+      // 기타 에러는 원본 메시지 반환
+      console.error('Login error details:', error)
+      res.status(400).json({ error: error.message || '로그인에 실패했습니다.' })
+      return
+    }
+
+    // 세션이 없는 경우 (이메일 확인 필요)
+    if (!data.session) {
+      res.status(401).json({ 
+        error: '이메일 인증이 필요합니다. 회원가입 시 받은 이메일을 확인해주세요.',
+        requiresEmailConfirmation: true
+      })
       return
     }
 
