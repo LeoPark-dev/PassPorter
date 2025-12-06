@@ -186,8 +186,18 @@ function App() {
         }
       }
 
-      // News API 호출
-      const url = `https://newsapi.org/v2/everything?q=${encodeURIComponent(query)}&language=en&sortBy=publishedAt&pageSize=20&apiKey=${apiKey}`
+      // News API 호출 (Vercel Serverless Function을 통해)
+      // 프로덕션에서는 /api/news를 사용하고, 개발 환경에서는 직접 호출
+      const isDevelopment = import.meta.env.DEV
+      let url
+      
+      if (isDevelopment) {
+        // 개발 환경: 직접 호출 (vite.config.js의 proxy 사용)
+        url = `https://newsapi.org/v2/everything?q=${encodeURIComponent(query)}&language=en&sortBy=publishedAt&pageSize=20&apiKey=${apiKey}`
+      } else {
+        // 프로덕션: Vercel Serverless Function 사용
+        url = `/api/news?query=${encodeURIComponent(query)}`
+      }
       
       const response = await fetch(url)
       
